@@ -1,10 +1,6 @@
 # Nexus AI Studio — Multi-Engine Enterprise AI Platform
 
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80" alt="Nexus AI Banner" width="100%" style="border-radius: 16px; max-height: 340px; object-fit: cover;" />
-</p>
-
-<p align="center">
   <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12"></a>
   <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3"></a>
   <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google%20Gemini-Official%20API-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini"></a>
