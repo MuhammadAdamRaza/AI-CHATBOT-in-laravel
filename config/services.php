@@ -36,16 +36,27 @@ return [
     ],
 
     'ai' => [
-        'provider' => env('AI_PROVIDER', 'gemini'),
+        'provider' => env('AI_PROVIDER', 'auto'),
         'key' => env('GEMINI_API_KEY', env('AI_API_KEY')),
-        'model' => env('GEMINI_MODEL', env('AI_MODEL', 'gemini-3.1-flash-lite')),
+        'model' => env('AI_MODEL', 'auto'),
         'url' => env('AI_API_URL', 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'),
     ],
 
     'gemini' => [
         'key' => env('GEMINI_API_KEY', env('AI_API_KEY')),
         'model' => env('GEMINI_MODEL', 'gemini-3.1-flash-lite'),
-        'url' => env('GEMINI_API_URL', 'https://generativelanguage.googleapis.com/v1beta'),
+        'url' => env('GEMINI_API_URL', 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'),
+    ],
+
+    'deepseek' => [
+        'key' => env('DEEPSEEK_API_KEY', env('OPENROUTER_API_KEY')),
+        'model' => env('DEEPSEEK_MODEL', 'deepseek/deepseek-chat'),
+        'url' => env('DEEPSEEK_API_URL', 'https://openrouter.ai/api/v1/chat/completions'),
+    ],
+
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'url' => env('OPENROUTER_API_URL', 'https://openrouter.ai/api/v1/chat/completions'),
     ],
 
 ];

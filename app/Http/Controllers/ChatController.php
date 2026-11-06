@@ -22,49 +22,64 @@ class ChatController extends Controller
         'default' => [
             'name' => 'General Assistant',
             'description' => 'Helpful, thoughtful, and well-rounded assistant with vision & image creation.',
-            'prompt' => 'You are Nexus AI, an advanced, polite, and helpful assistant powered by Google Gemini. Provide high-quality, formatted Markdown responses. When analyzing images or documents, be thorough, detailed, and insightful. CRITICAL CONVERSATION RULES: 1. Always answer the user\'s latest message directly. Do NOT apologize for past typos or drag old unrelated topics (like past movie questions or previous conversation threads) into new messages. 2. You have full AI image generation capabilities: whenever the user asks to create, draw, generate, or visualize an image (e.g. "generate an image of...", "draw a...", "tasveer banao", "spider image"), formulate a vivid, detailed descriptive English prompt and ALWAYS embed it directly using Markdown: ![Image Description](https://image.pollinations.ai/prompt/{url_encoded_prompt}?width=1024&height=1024&nologo=true&seed={random_number}) followed by a brief friendly description. NEVER ask "Do you want me to generate an image?" - immediately generate it!',
+            'prompt' => 'You are Nexus AI, an elite, highly intelligent AI assistant powered by Google Gemini, OpenAI ChatGPT, Anthropic Claude, DeepSeek, and xAI Grok. Deliver articulate, comprehensive, beautifully structured Markdown responses. Always answer the user\'s current prompt directly, accurately, and thoroughly. If the user writes in English, Urdu, or Roman Urdu, respond naturally in their language. If asked to draw or create an image, vividly describe it and embed: ![Art](https://image.pollinations.ai/prompt/{url_encoded_prompt}?width=1024&height=1024&nologo=true&seed={random_number}).',
             'icon' => 'sparkles',
         ],
         'artist' => [
             'name' => 'AI Image & Concept Artist',
             'description' => 'Generates photorealistic images, digital art & illustrations.',
-            'prompt' => 'You are an elite AI digital artist and concept designer. When the user describes a visual or asks for an image, refine their idea into a breathtaking, highly detailed visual prompt and render it using: ![Art Description](https://image.pollinations.ai/prompt/{url_encoded_prompt}?width=1024&height=1024&nologo=true&seed={random_number}) and describe the artistic style, lighting, and composition.',
+            'prompt' => 'You are an elite AI digital artist and concept designer. When the user describes a visual or asks for an image, refine their idea into a breathtaking, highly detailed visual prompt and render it using: ![Art](https://image.pollinations.ai/prompt/{url_encoded_prompt}?width=1024&height=1024&nologo=true&seed={random_number}) and describe the artistic style, lighting, and composition.',
             'icon' => 'image',
         ],
         'coder' => [
             'name' => 'Senior Code Architect',
             'description' => 'Clean code, architecture patterns, and debugging.',
-            'prompt' => 'You are an elite principal software engineer and architect powered by Google Gemini. Provide clean, well-commented, secure code in markdown format with language identifiers and performance insights.',
+            'prompt' => 'You are an elite principal software engineer and architect powered by Claude, DeepSeek, and Gemini. Provide clean, well-commented, secure code in markdown format with language identifiers and performance insights.',
             'icon' => 'code',
         ],
         'writer' => [
             'name' => 'Copywriter & Editor',
             'description' => 'Creative writing, emails, and content polish.',
-            'prompt' => 'You are a master creative writer and professional editor powered by Google Gemini. Craft compelling, articulate prose, catchy headlines, and crisp emails.',
+            'prompt' => 'You are a master creative writer and professional editor. Craft compelling, articulate prose, catchy headlines, and crisp emails in beautiful Markdown.',
             'icon' => 'pen-tool',
         ],
         'analyst' => [
             'name' => 'Business Analyst',
             'description' => 'Data breakdowns, SWOT, strategy, and logic.',
-            'prompt' => 'You are a senior business intelligence and strategy analyst powered by Google Gemini. Structure your insights with concise bullet points, pros/cons, and actionable next steps.',
+            'prompt' => 'You are a senior business intelligence and strategy analyst. Structure your insights with concise bullet points, pros/cons, and actionable next steps.',
             'icon' => 'bar-chart-2',
         ],
         'concise' => [
             'name' => 'Direct & Concise',
             'description' => 'Bullet-point answers with zero filler.',
-            'prompt' => 'You are a direct, concise AI assistant powered by Google Gemini. Answer immediately with facts and bullets without introductory greetings or conversational fluff.',
+            'prompt' => 'You are a direct, concise AI assistant. Answer immediately with facts and bullets without introductory greetings or conversational fluff.',
             'icon' => 'zap',
         ],
     ];
 
     /**
-     * Google Gemini Models with capability metadata.
+     * AI Models Catalog (Google Gemini & DeepSeek AI) with capability metadata.
      *
-     * @var array<string, array{name: string, badge: string, badge_color: string, desc: string, speed: string, intelligence: string}>
+     * @var array<string, array{name: string, provider: string, provider_badge: string, badge: string, badge_color: string, desc: string, speed: string, intelligence: string}>
      */
     protected array $models = [
+        // Smart Auto-Pilot Router
+        'auto' => [
+            'name' => 'Auto (Smart Engine)',
+            'provider' => 'Smart Router',
+            'provider_badge' => 'Auto-Pilot',
+            'badge' => 'AI Selects Best',
+            'badge_color' => 'purple',
+            'desc' => 'Dynamically analyzes user requirement & routes to Claude, DeepSeek, Grok, Gemini, or ChatGPT.',
+            'speed' => 'Adaptive',
+            'intelligence' => 'Maximum',
+        ],
+
+        // Google Gemini Models
         'gemini-3.1-flash-lite' => [
             'name' => 'Gemini 3.1 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Default & Fast',
             'badge_color' => 'blue',
             'desc' => "Ultra-fast multimodal execution model for immediate answers, code & analysis.",
@@ -73,6 +88,8 @@ class ChatController extends Controller
         ],
         'gemini-3.5-flash-lite' => [
             'name' => 'Gemini 3.5 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'High Throughput',
             'badge_color' => 'indigo',
             'desc' => 'High-capacity multimodal model with 1M token context for large documents & files.',
@@ -81,6 +98,8 @@ class ChatController extends Controller
         ],
         'gemini-4-argon' => [
             'name' => 'Gemini 4 Argon',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Deep Reasoning',
             'badge_color' => 'purple',
             'desc' => 'Most powerful Google model for complex logic, math, research and architecture.',
@@ -89,15 +108,144 @@ class ChatController extends Controller
         ],
         'gemini-3.8-flash' => [
             'name' => 'Gemini 3.8 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Multimodal Pro',
             'badge_color' => 'emerald',
             'desc' => 'Balanced multimodal intelligence for complex vision, files and workflows.',
             'speed' => 'Balanced',
             'intelligence' => 'High',
         ],
-        // Backward compatibility mappings for previously created chats
+
+        // DeepSeek AI Models
+        'deepseek-chat' => [
+            'name' => 'DeepSeek V3',
+            'provider' => 'DeepSeek AI',
+            'provider_badge' => 'DeepSeek',
+            'badge' => 'MoE 671B',
+            'badge_color' => 'sky',
+            'desc' => 'DeepSeek-V3 671B Mixture-of-Experts for coding, conversation, and multilingual tasks.',
+            'speed' => 'Ultra Fast',
+            'intelligence' => 'Very High',
+        ],
+        'deepseek-reasoner' => [
+            'name' => 'DeepSeek R1',
+            'provider' => 'DeepSeek AI',
+            'provider_badge' => 'DeepSeek',
+            'badge' => 'Deep Thinking (R1)',
+            'badge_color' => 'teal',
+            'desc' => 'State-of-the-art open reasoning model featuring transparent chain-of-thought logic & math.',
+            'speed' => 'Deliberate',
+            'intelligence' => 'Maximum',
+        ],
+
+        // OpenAI ChatGPT Models (via OpenRouter)
+        'gpt-4o-mini' => [
+            'name' => 'ChatGPT 4o-mini',
+            'provider' => 'OpenAI ChatGPT',
+            'provider_badge' => 'OpenAI',
+            'badge' => 'GPT-4o Mini',
+            'badge_color' => 'emerald',
+            'desc' => 'Fast, lightweight intelligence from OpenAI for daily tasks, code and reasoning.',
+            'speed' => 'Fastest',
+            'intelligence' => 'High',
+        ],
+
+        // Anthropic Claude Models (via OpenRouter)
+        'claude-sonnet-5' => [
+            'name' => 'Claude 3.5 Sonnet',
+            'provider' => 'Anthropic Claude',
+            'provider_badge' => 'Claude',
+            'badge' => 'Sonnet 3.5',
+            'badge_color' => 'amber',
+            'desc' => 'Leading industry model for advanced coding, nuanced creative writing, and system analysis.',
+            'speed' => 'Fast',
+            'intelligence' => 'Maximum',
+        ],
+        'claude-haiku-5.5' => [
+            'name' => 'Claude 3.5 Haiku',
+            'provider' => 'Anthropic Claude',
+            'provider_badge' => 'Claude',
+            'badge' => 'Haiku 3.5',
+            'badge_color' => 'orange',
+            'desc' => 'High-velocity compact model from Anthropic for instant, precise Q&A.',
+            'speed' => 'Ultra Fast',
+            'intelligence' => 'High',
+        ],
+
+        // xAI Grok Models (via OpenRouter)
+        'grok-4.5' => [
+            'name' => 'Grok 2 (xAI)',
+            'provider' => 'xAI Grok',
+            'provider_badge' => 'xAI',
+            'badge' => 'Grok Intelligence',
+            'badge_color' => 'rose',
+            'desc' => 'State-of-the-art model from xAI with real-world knowledge and direct answers.',
+            'speed' => 'Fast',
+            'intelligence' => 'Very High',
+        ],
+
+        // Alibaba Qwen Coder (via OpenRouter)
+        'qwen-coder' => [
+            'name' => 'Qwen 2.5 Coder',
+            'provider' => 'Alibaba Qwen',
+            'provider_badge' => 'Qwen',
+            'badge' => 'Coder 32B',
+            'badge_color' => 'emerald',
+            'desc' => 'Specialized code intelligence for multi-language development, algorithms & refactoring.',
+            'speed' => 'Ultra Fast',
+            'intelligence' => 'Very High',
+        ],
+
+        // Meta Llama Models (via OpenRouter)
+        'llama-3.3-70b' => [
+            'name' => 'Llama 3.3 70B',
+            'provider' => 'Meta AI',
+            'provider_badge' => 'Meta',
+            'badge' => '70B Turbo',
+            'badge_color' => 'indigo',
+            'desc' => 'Meta flagship open-weights model delivering industry-grade reasoning and wide knowledge.',
+            'speed' => 'Fast',
+            'intelligence' => 'Very High',
+        ],
+
+        // Live Real-Time Web Search AI (via OpenRouter :online)
+        'web-search' => [
+            'name' => 'Live Web Search AI',
+            'provider' => 'Real-Time Web',
+            'provider_badge' => 'Web Search',
+            'badge' => 'Live Search',
+            'badge_color' => 'sky',
+            'desc' => 'Real-time live internet grounding for today\'s news, current prices, sports scores and live facts.',
+            'speed' => 'Fast',
+            'intelligence' => 'Live Grounded',
+        ],
+
+        // Aliases & Backward compatibility mappings
+        'deepseek-r1' => [
+            'name' => 'DeepSeek R1',
+            'provider' => 'DeepSeek AI',
+            'provider_badge' => 'DeepSeek',
+            'badge' => 'Deep Thinking (R1)',
+            'badge_color' => 'teal',
+            'desc' => 'Mapped to DeepSeek R1.',
+            'speed' => 'Deliberate',
+            'intelligence' => 'Maximum',
+        ],
+        'deepseek-v3' => [
+            'name' => 'DeepSeek V3',
+            'provider' => 'DeepSeek AI',
+            'provider_badge' => 'DeepSeek',
+            'badge' => 'MoE 671B',
+            'badge_color' => 'sky',
+            'desc' => 'Mapped to DeepSeek V3.',
+            'speed' => 'Ultra Fast',
+            'intelligence' => 'Very High',
+        ],
         'gemini-2.0-flash' => [
             'name' => 'Gemini 3.1 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Default & Fast',
             'badge_color' => 'blue',
             'desc' => 'Mapped to Gemini 3.1 Flash.',
@@ -106,6 +254,8 @@ class ChatController extends Controller
         ],
         'gemini-2.5-flash' => [
             'name' => 'Gemini 3.5 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'High Throughput',
             'badge_color' => 'indigo',
             'desc' => 'Mapped to Gemini 3.5 Flash.',
@@ -114,6 +264,8 @@ class ChatController extends Controller
         ],
         'gemini-2.5-pro' => [
             'name' => 'Gemini 4 Argon',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Deep Reasoning',
             'badge_color' => 'purple',
             'desc' => 'Mapped to Gemini 4 Argon.',
@@ -122,6 +274,8 @@ class ChatController extends Controller
         ],
         'gemini-2.0-flash-thinking-exp' => [
             'name' => 'Gemini 4 Argon',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Chain of Thought',
             'badge_color' => 'emerald',
             'desc' => 'Mapped to Gemini 4 Argon.',
@@ -130,6 +284,8 @@ class ChatController extends Controller
         ],
         'gemini-2.0-flash-lite' => [
             'name' => 'Gemini 3.1 Flash',
+            'provider' => 'Google Gemini',
+            'provider_badge' => 'Google',
             'badge' => 'Instant & Light',
             'badge_color' => 'amber',
             'desc' => 'Mapped to Gemini 3.1 Flash.',
@@ -137,36 +293,34 @@ class ChatController extends Controller
             'intelligence' => 'Balanced',
         ],
         'gpt-4o' => [
-            'name' => 'Gemini 4 Argon',
-            'badge' => 'Deep Reasoning',
-            'badge_color' => 'purple',
-            'desc' => 'Flagship model mapped to Gemini 4 Argon.',
-            'speed' => 'Thoughtful',
-            'intelligence' => 'Maximum',
-        ],
-        'gpt-4o-mini' => [
-            'name' => 'Gemini 3.1 Flash',
-            'badge' => 'Fast & Light',
-            'badge_color' => 'blue',
-            'desc' => 'Workhorse model mapped to Gemini 3.1 Flash.',
+            'name' => 'ChatGPT 4o-mini',
+            'provider' => 'OpenAI ChatGPT',
+            'provider_badge' => 'OpenAI',
+            'badge' => 'GPT-4o Mini',
+            'badge_color' => 'emerald',
+            'desc' => 'Mapped to ChatGPT 4o-mini.',
             'speed' => 'Fastest',
             'intelligence' => 'High',
         ],
         'o3-mini' => [
-            'name' => 'Gemini 4 Argon',
+            'name' => 'DeepSeek R1',
+            'provider' => 'DeepSeek AI',
+            'provider_badge' => 'DeepSeek',
             'badge' => 'Reasoning',
-            'badge_color' => 'emerald',
-            'desc' => 'Reasoning model mapped to Gemini 4 Argon.',
+            'badge_color' => 'teal',
+            'desc' => 'Reasoning model mapped to DeepSeek R1.',
             'speed' => 'Deliberate',
             'intelligence' => 'Maximum',
         ],
         'gpt-3.5-turbo' => [
-            'name' => 'Gemini 3.1 Flash',
-            'badge' => 'Instant & Light',
-            'badge_color' => 'amber',
-            'desc' => 'Lightweight model mapped to Gemini 3.1 Flash.',
-            'speed' => 'Instant',
-            'intelligence' => 'Balanced',
+            'name' => 'ChatGPT 4o-mini',
+            'provider' => 'OpenAI ChatGPT',
+            'provider_badge' => 'OpenAI',
+            'badge' => 'GPT-4o Mini',
+            'badge_color' => 'emerald',
+            'desc' => 'Legacy model mapped to ChatGPT 4o-mini.',
+            'speed' => 'Fastest',
+            'intelligence' => 'High',
         ],
     ];
 
@@ -196,7 +350,7 @@ class ChatController extends Controller
 
         return view('chat', [
             'models' => $this->models,
-            'defaultModel' => config('services.ai.model', 'gemini-3.1-flash-lite'),
+            'defaultModel' => config('services.ai.model', 'auto'),
             'personas' => $this->personas,
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
@@ -358,6 +512,7 @@ class ChatController extends Controller
             'persona' => ['nullable', 'string', 'in:' . implode(',', array_keys($this->personas))],
             'temperature' => ['nullable', 'numeric', 'min:0', 'max:2'],
             'attachments' => ['nullable', 'array'],
+            'web_search' => ['nullable', 'boolean'],
         ]);
 
         $userPrompt = trim((string) ($validated['message'] ?? ''));
@@ -382,7 +537,7 @@ class ChatController extends Controller
                 'user_id' => $userId,
                 'session_id' => $sessionId,
                 'title' => $initialTitle,
-                'model' => $validated['model'] ?? config('services.ai.model', 'gemini-3.1-flash-lite'),
+                'model' => $validated['model'] ?? config('services.ai.model', 'auto'),
                 'persona' => $validated['persona'] ?? 'default',
                 'temperature' => isset($validated['temperature']) ? (float) $validated['temperature'] : 0.70,
             ]);
@@ -400,9 +555,31 @@ class ChatController extends Controller
             $conversation->update(['model' => $validated['model']]);
         }
 
-        $activeModel = $conversation->model;
+        $requestedModel = $validated['model'] ?? $conversation->model ?? 'auto';
+        $isWebSearch = (bool) ($request->boolean('web_search'));
+        $autoDecision = null;
+
+        if ($isWebSearch) {
+            $activeModel = 'web-search';
+            $autoDecision = [
+                'model' => 'web-search',
+                'provider' => 'Real-Time Web AI',
+                'reason' => 'Live Internet Search & Grounding',
+                'badge' => 'Live Search',
+            ];
+        } elseif ($requestedModel === 'auto' || empty($requestedModel)) {
+            $autoDecision = $chatbot->detectOptimalModel($userPrompt, $attachments);
+            $activeModel = $autoDecision['model'];
+        } else {
+            $activeModel = $requestedModel;
+        }
+
         $personaKey = $conversation->persona;
         $systemPrompt = $this->personas[$personaKey]['prompt'] ?? $this->personas['default']['prompt'];
+
+        if ($isWebSearch || $activeModel === 'web-search') {
+            $systemPrompt .= "\n\nYou have real-time live internet web browsing enabled. Search the live internet for up-to-date, factual information, current prices, today's news and cite sources wherever relevant.";
+        }
 
         // Save user message in MySQL with attachments JSON
         Message::create([
@@ -413,59 +590,46 @@ class ChatController extends Controller
             'attachments' => ! empty($attachments) ? $attachments : null,
         ]);
 
-        // Build messages payload for AI API from MySQL history
-        $recentMessages = $conversation->messages()
-            ->orderBy('id', 'desc')
-            ->take(16)
-            ->get()
-            ->reverse();
+        // Build zero-pollution API messages payload: focuses 100% on the user's latest prompt
+        $textAdditions = '';
+        $hasImages = false;
+        $imageParts = [];
 
-        $apiMessages = [
-            ['role' => 'system', 'content' => $systemPrompt],
-        ];
-
-        foreach ($recentMessages as $msg) {
-            $msgContent = $msg->content;
-            $msgAttachments = is_array($msg->attachments) ? $msg->attachments : [];
-
-            $hasImages = false;
-            $imageParts = [];
-            $textAdditions = '';
-
-            foreach ($msgAttachments as $att) {
-                if (($att['type'] ?? '') === 'image' && ! empty($att['base64'])) {
-                    $hasImages = true;
-                    $imageParts[] = [
-                        'type' => 'image_url',
-                        'image_url' => [
-                            'url' => $att['base64'],
-                        ],
-                    ];
-                } elseif (! empty($att['text_preview'])) {
-                    $textAdditions .= "\n\n[Attached Document: {$att['name']}]\n```\n{$att['text_preview']}\n```";
-                }
-            }
-
-            if ($hasImages) {
-                $contentArray = [
-                    ['type' => 'text', 'text' => $msgContent . $textAdditions],
+        foreach ($attachments as $att) {
+            if (($att['type'] ?? '') === 'image' && ! empty($att['base64'])) {
+                $hasImages = true;
+                $imageParts[] = [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $att['base64'],
+                    ],
                 ];
-                foreach ($imageParts as $img) {
-                    $contentArray[] = $img;
-                }
-                $apiMessages[] = [
-                    'role' => $msg->role,
-                    'content' => $contentArray,
-                ];
-            } else {
-                $apiMessages[] = [
-                    'role' => $msg->role,
-                    'content' => $msgContent . $textAdditions,
-                ];
+            } elseif (! empty($att['text_preview'])) {
+                $textAdditions .= "\n\n[Attached Document: {$att['name']}]\n```\n{$att['text_preview']}\n```";
             }
         }
 
-        return response()->stream(function () use ($chatbot, $apiMessages, $activeModel, $conversation): void {
+        $userContent = $userPrompt . $textAdditions;
+
+        if ($hasImages) {
+            $userMessageArray = [
+                ['type' => 'text', 'text' => $userContent],
+            ];
+            foreach ($imageParts as $img) {
+                $userMessageArray[] = $img;
+            }
+            $apiMessages = [
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user', 'content' => $userMessageArray],
+            ];
+        } else {
+            $apiMessages = [
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user', 'content' => $userContent],
+            ];
+        }
+
+        return response()->stream(function () use ($chatbot, $apiMessages, $activeModel, $conversation, $autoDecision): void {
             if (ob_get_level() > 0) {
                 ob_end_clean();
             }
@@ -473,7 +637,11 @@ class ChatController extends Controller
             echo 'data: ' . json_encode([
                 'conversation_id' => $conversation->id,
                 'title' => $conversation->title,
-                'model' => $conversation->model,
+                'model' => $activeModel,
+                'auto_routed' => $autoDecision !== null,
+                'routed_reason' => $autoDecision['reason'] ?? null,
+                'routed_provider' => $autoDecision['provider'] ?? null,
+                'routed_badge' => $autoDecision['badge'] ?? null,
             ]) . "\n\n";
 
             if (ob_get_level() > 0) {
@@ -527,6 +695,7 @@ class ChatController extends Controller
             'conversation_id' => ['nullable', 'integer', 'exists:conversations,id'],
             'model' => ['nullable', 'string', 'in:' . implode(',', array_keys($this->models))],
             'attachments' => ['nullable', 'array'],
+            'web_search' => ['nullable', 'boolean'],
         ]);
 
         $userPrompt = trim((string) ($validated['message'] ?? ''));
@@ -546,13 +715,37 @@ class ChatController extends Controller
                 'user_id' => $userId,
                 'session_id' => $sessionId,
                 'title' => Str::limit($userPrompt ?: 'Attachment Chat', 32, '...'),
-                'model' => $validated['model'] ?? config('services.ai.model', 'gemini-3.1-flash-lite'),
+                'model' => $validated['model'] ?? config('services.ai.model', 'auto'),
                 'persona' => 'default',
                 'temperature' => 0.70,
             ]);
         }
 
-        $activeModel = $validated['model'] ?? $conversation->model;
+        $requestedModel = $validated['model'] ?? $conversation->model ?? 'auto';
+        $isWebSearch = (bool) ($request->boolean('web_search'));
+        $autoDecision = null;
+
+        if ($isWebSearch) {
+            $activeModel = 'web-search';
+            $autoDecision = [
+                'model' => 'web-search',
+                'provider' => 'Real-Time Web AI',
+                'reason' => 'Live Internet Search & Grounding',
+                'badge' => 'Live Search',
+            ];
+        } elseif ($requestedModel === 'auto' || empty($requestedModel)) {
+            $autoDecision = $chatbot->detectOptimalModel($userPrompt, $attachments);
+            $activeModel = $autoDecision['model'];
+        } else {
+            $activeModel = $requestedModel;
+        }
+
+        $personaKey = $conversation->persona;
+        $systemPrompt = $this->personas[$personaKey]['prompt'] ?? $this->personas['default']['prompt'];
+
+        if ($isWebSearch || $activeModel === 'web-search') {
+            $systemPrompt .= "\n\nYou have real-time live internet web browsing enabled. Search the live internet for up-to-date, factual information, current prices, today's news and cite sources wherever relevant.";
+        }
 
         Message::create([
             'conversation_id' => $conversation->id,
@@ -581,6 +774,10 @@ class ChatController extends Controller
             'title' => $conversation->title,
             'reply' => $reply,
             'model' => $activeModel,
+            'auto_routed' => $autoDecision !== null,
+            'routed_reason' => $autoDecision['reason'] ?? null,
+            'routed_provider' => $autoDecision['provider'] ?? null,
+            'routed_badge' => $autoDecision['badge'] ?? null,
         ]);
     }
 

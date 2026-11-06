@@ -1,0 +1,2 @@
+<!-- Model menu placeholder: additional model options (Gemini, OpenAI, DeepSeek, Claude, etc.) can be added here -->
+<div class="text-sm text-slate-500 dark:text-slate-400">Model options go here.</div>
