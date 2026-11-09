@@ -316,17 +316,41 @@
                             $pBadge = $currentModelMeta['provider_badge'] ?? 'Auto-Pilot';
                             
                             $pStyleMap = [
-                                'Auto-Pilot' => ['badge' => 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300', 'icon' => 'sparkles', 'iconColor' => 'text-purple-500'],
-                                'Google' => ['badge' => 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300', 'icon' => 'sparkles', 'iconColor' => 'text-blue-500'],
-                                'DeepSeek' => ['badge' => 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300', 'icon' => 'cpu', 'iconColor' => 'text-sky-500'],
-                                'OpenAI' => ['badge' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', 'icon' => 'bot', 'iconColor' => 'text-emerald-500'],
-                                'Claude' => ['badge' => 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300', 'icon' => 'flame', 'iconColor' => 'text-amber-500'],
-                                'xAI' => ['badge' => 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300', 'icon' => 'zap', 'iconColor' => 'text-rose-500'],
-                                'Qwen' => ['badge' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', 'icon' => 'code-2', 'iconColor' => 'text-emerald-500'],
-                                'Meta' => ['badge' => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300', 'icon' => 'layers', 'iconColor' => 'text-indigo-500'],
-                                'Web Search' => ['badge' => 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300', 'icon' => 'globe', 'iconColor' => 'text-sky-500'],
+                                'Auto-Pilot' => ['badge' => 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300', 'icon' => 'sparkles', 'iconColor' => 'text-purple-500', 'avatarBg' => 'from-purple-600 via-indigo-600 to-blue-600'],
+                                'Google' => ['badge' => 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300', 'icon' => 'sparkles', 'iconColor' => 'text-blue-500', 'avatarBg' => 'from-blue-600 to-indigo-600'],
+                                'DeepSeek' => ['badge' => 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300', 'icon' => 'cpu', 'iconColor' => 'text-sky-500', 'avatarBg' => 'from-sky-600 to-blue-700'],
+                                'OpenAI' => ['badge' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', 'icon' => 'bot', 'iconColor' => 'text-emerald-500', 'avatarBg' => 'from-emerald-600 to-teal-700'],
+                                'Claude' => ['badge' => 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300', 'icon' => 'flame', 'iconColor' => 'text-amber-500', 'avatarBg' => 'from-amber-600 to-orange-700'],
+                                'xAI' => ['badge' => 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300', 'icon' => 'zap', 'iconColor' => 'text-rose-500', 'avatarBg' => 'from-rose-600 to-pink-700'],
+                                'Qwen' => ['badge' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', 'icon' => 'code-2', 'iconColor' => 'text-emerald-500', 'avatarBg' => 'from-emerald-600 to-cyan-700'],
+                                'Meta' => ['badge' => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300', 'icon' => 'layers', 'iconColor' => 'text-indigo-500', 'avatarBg' => 'from-indigo-600 to-purple-700'],
+                                'Web Search' => ['badge' => 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300', 'icon' => 'globe', 'iconColor' => 'text-sky-500', 'avatarBg' => 'from-sky-600 to-cyan-700'],
                             ];
                             $activePStyle = $pStyleMap[$pBadge] ?? $pStyleMap['Auto-Pilot'];
+
+                            $getModelInfo = function (?string $modelKey) use ($models, $pStyleMap) {
+                                $meta = $models[$modelKey ?? ''] ?? null;
+                                if (! $meta) {
+                                    $meta = $models['gpt-4o-mini'] ?? [
+                                        'name' => 'ChatGPT 4o-mini',
+                                        'provider' => 'OpenAI ChatGPT',
+                                        'provider_badge' => 'OpenAI',
+                                        'badge' => 'GPT-4o Mini',
+                                    ];
+                                }
+                                $pBadge = $meta['provider_badge'] ?? 'OpenAI';
+                                $style = $pStyleMap[$pBadge] ?? $pStyleMap['OpenAI'] ?? $pStyleMap['Auto-Pilot'];
+
+                                return [
+                                    'name' => $meta['name'],
+                                    'provider' => $meta['provider'] ?? $pBadge,
+                                    'badge' => $meta['badge'] ?? $pBadge,
+                                    'icon' => $style['icon'] ?? 'bot',
+                                    'iconColor' => $style['iconColor'] ?? 'text-emerald-500',
+                                    'badgeClass' => $style['badge'] ?? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+                                    'avatarBg' => $style['avatarBg'] ?? 'from-emerald-600 to-teal-700',
+                                ];
+                            };
                         @endphp
                         <button
                             id="model-switcher-btn"
@@ -819,13 +843,34 @@
                     @foreach ($messages as $msg)
                         <div class="message-wrapper flex gap-3 sm:gap-4 {{ $msg->role === 'user' ? 'justify-end' : 'justify-start' }}">
                             @if ($msg->role === 'assistant')
-                                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20 ring-2 ring-blue-500/15 mt-0.5">
-                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                @php
+                                    $mInfo = $getModelInfo($msg->model);
+                                    $isConvAuto = ($activeConversation?->model ?? 'auto') === 'auto' || empty($msg->model) || $msg->model === 'auto';
+                                @endphp
+                                <div class="h-8 w-8 rounded-full bg-gradient-to-tr {{ $mInfo['avatarBg'] }} text-white flex items-center justify-center shrink-0 shadow-md ring-2 ring-white/10 mt-0.5">
+                                    <i data-lucide="{{ $mInfo['icon'] }}" class="w-4 h-4"></i>
                                 </div>
                             @endif
 
                             <div class="max-w-[88%] sm:max-w-[80%] space-y-2">
-                                
+                                @if ($msg->role === 'assistant')
+                                    <div class="assistant-model-header flex items-center gap-2 mb-1.5 flex-wrap">
+                                        <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-100">
+                                            <i data-lucide="{{ $mInfo['icon'] }}" class="w-3.5 h-3.5 {{ $mInfo['iconColor'] }}"></i>
+                                            <span>{{ $mInfo['name'] }}</span>
+                                        </span>
+                                        <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded {{ $mInfo['badgeClass'] }}">
+                                            {{ $mInfo['badge'] }}
+                                        </span>
+                                        @if ($isConvAuto)
+                                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 flex items-center gap-1 shadow-xs">
+                                                <i data-lucide="sparkles" class="w-2.5 h-2.5 text-purple-500"></i>
+                                                <span>Auto-Selected (Smart Engine)</span>
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 {{-- Render User Attachments if any --}}
                                 @if (! empty($msg->attachments) && is_array($msg->attachments))
                                     <div class="flex flex-wrap gap-2 mb-2">
@@ -854,13 +899,21 @@
                                 </div>
 
                                 @if ($msg->role === 'assistant')
-                                    <div class="assistant-actions flex items-center gap-3 px-1 pt-1 text-xs text-slate-400">
-                                        <button type="button" onclick="navigator.clipboard.writeText({{ json_encode($msg->content) }}); showToast('Copied to clipboard');" class="flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
-                                        </button>
-                                        <button type="button" onclick="readAloud({{ json_encode($msg->content) }})" class="flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                                            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
-                                        </button>
+                                    <div class="assistant-actions flex items-center justify-between gap-3 px-1 pt-1 text-xs text-slate-400">
+                                        <div class="flex items-center gap-3">
+                                            <button type="button" onclick="navigator.clipboard.writeText({{ json_encode($msg->content) }}); showToast('Copied to clipboard');" class="flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
+                                            </button>
+                                            <button type="button" onclick="readAloud({{ json_encode($msg->content) }})" class="flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
+                                            </button>
+                                        </div>
+                                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                                            Answered by <strong class="text-slate-600 dark:text-slate-300 font-semibold">{{ $mInfo['name'] }}</strong>
+                                            @if ($isConvAuto)
+                                                <span class="text-purple-600 dark:text-purple-400 font-medium">(Auto Engine)</span>
+                                            @endif
+                                        </span>
                                     </div>
                                 @endif
                             </div>
@@ -898,8 +951,9 @@
                             <!-- Dynamic attachment chips render here -->
                         </div>
 
-                        {{-- Hidden File Input --}}
+                        {{-- Hidden File & Camera Inputs --}}
                         <input type="file" id="file-input" class="hidden" multiple accept="image/*,.pdf,.txt,.csv,.json,.md,.sql,.php,.js,.ts,.py,.html,.css,.xml,.log">
+                        <input type="file" id="camera-input" class="hidden" accept="image/*" capture="environment">
 
                         {{-- QUICK INLINE CAPABILITY CHIPS --}}
                         <div class="flex items-center gap-1.5 px-1.5 pb-1.5 overflow-x-auto text-[11px] text-slate-500 dark:text-slate-400 no-scrollbar">
@@ -931,7 +985,7 @@
 
                         <div class="flex items-center justify-between pt-2 px-1">
                             
-                            {{-- Attachment & Voice Buttons --}}
+                            {{-- Attachment, Camera & Voice Buttons --}}
                             <div class="flex items-center gap-1.5">
                                 <button
                                     id="attach-btn"
@@ -940,6 +994,16 @@
                                     class="p-2 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-dark-800 transition active:scale-95"
                                 >
                                     <i data-lucide="paperclip" class="w-4 h-4"></i>
+                                </button>
+
+                                <button
+                                    id="camera-btn"
+                                    type="button"
+                                    title="Take photo with camera"
+                                    aria-label="Capture with Camera"
+                                    class="p-2 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-dark-800 transition active:scale-95"
+                                >
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
                                 </button>
 
                                 <button
@@ -1021,7 +1085,9 @@
         const sendBtn = document.getElementById('send-btn');
         const stopBtn = document.getElementById('stop-btn');
         const attachBtn = document.getElementById('attach-btn');
+        const cameraBtn = document.getElementById('camera-btn');
         const fileInput = document.getElementById('file-input');
+        const cameraInput = document.getElementById('camera-input');
         const attachmentsBar = document.getElementById('attachments-bar');
         const voiceInputBtn = document.getElementById('voice-input-btn');
         const micIcon = document.getElementById('mic-icon');
@@ -1065,6 +1131,7 @@
         let isTTSAutoPlay = false;
         let speechRecognition = null;
         let isRecording = false;
+        const allModels = @json($models);
 
         // Configure Marked
         marked.setOptions({
@@ -1148,49 +1215,87 @@
             auto: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
                 iconHtml: '<i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500"></i>',
+                avatarBg: 'from-purple-600 via-indigo-600 to-blue-600',
                 activeClass: 'bg-purple-50/70 dark:bg-dark-800/90 ring-1 ring-purple-500/30',
             },
             gemini: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
                 iconHtml: '<i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-500"></i>',
+                avatarBg: 'from-blue-600 to-indigo-600',
+                activeClass: 'bg-blue-50/60 dark:bg-dark-800/90 ring-1 ring-blue-500/30',
+            },
+            google: {
+                badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+                iconHtml: '<i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-500"></i>',
+                avatarBg: 'from-blue-600 to-indigo-600',
                 activeClass: 'bg-blue-50/60 dark:bg-dark-800/90 ring-1 ring-blue-500/30',
             },
             openai: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
                 iconHtml: '<i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-500"></i>',
+                avatarBg: 'from-emerald-600 to-teal-700',
                 activeClass: 'bg-emerald-50/60 dark:bg-dark-800/90 ring-1 ring-emerald-500/30',
             },
             claude: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
                 iconHtml: '<i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500"></i>',
+                avatarBg: 'from-amber-600 to-orange-700',
                 activeClass: 'bg-amber-50/60 dark:bg-dark-800/90 ring-1 ring-amber-500/30',
             },
             deepseek: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300',
                 iconHtml: '<i data-lucide="cpu" class="w-3.5 h-3.5 text-sky-500"></i>',
+                avatarBg: 'from-sky-600 to-blue-700',
                 activeClass: 'bg-sky-50/60 dark:bg-dark-800/90 ring-1 ring-sky-500/30',
             },
             grok: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
                 iconHtml: '<i data-lucide="zap" class="w-3.5 h-3.5 text-rose-500"></i>',
+                avatarBg: 'from-rose-600 to-pink-700',
                 activeClass: 'bg-rose-50/60 dark:bg-dark-800/90 ring-1 ring-rose-500/30',
             },
             qwen: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
                 iconHtml: '<i data-lucide="code-2" class="w-3.5 h-3.5 text-emerald-500"></i>',
+                avatarBg: 'from-emerald-600 to-cyan-700',
                 activeClass: 'bg-emerald-50/60 dark:bg-dark-800/90 ring-1 ring-emerald-500/30',
             },
             meta: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300',
                 iconHtml: '<i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-500"></i>',
+                avatarBg: 'from-indigo-600 to-purple-700',
                 activeClass: 'bg-indigo-50/60 dark:bg-dark-800/90 ring-1 ring-indigo-500/30',
             },
             web: {
                 badgeClass: 'text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300',
                 iconHtml: '<i data-lucide="globe" class="w-3.5 h-3.5 text-sky-500"></i>',
+                avatarBg: 'from-sky-600 to-cyan-700',
                 activeClass: 'bg-sky-50/60 dark:bg-dark-800/90 ring-1 ring-sky-500/30',
             },
         };
+
+        function getModelDisplayMeta(modelKey) {
+            const meta = allModels[modelKey] || allModels['gpt-4o-mini'] || {
+                name: 'ChatGPT 4o-mini',
+                provider: 'OpenAI ChatGPT',
+                provider_badge: 'OpenAI',
+                badge: 'GPT-4o Mini',
+            };
+            const pBadge = (meta.provider_badge || 'OpenAI').toLowerCase();
+            let themeKey = 'openai';
+            if (pBadge.includes('google') || pBadge.includes('gemini')) themeKey = 'gemini';
+            else if (pBadge.includes('openai') || pBadge.includes('chatgpt')) themeKey = 'openai';
+            else if (pBadge.includes('deepseek')) themeKey = 'deepseek';
+            else if (pBadge.includes('claude')) themeKey = 'claude';
+            else if (pBadge.includes('xai') || pBadge.includes('grok')) themeKey = 'grok';
+            else if (pBadge.includes('qwen')) themeKey = 'qwen';
+            else if (pBadge.includes('meta')) themeKey = 'meta';
+            else if (pBadge.includes('search') || pBadge.includes('web')) themeKey = 'web';
+            else if (pBadge.includes('auto')) themeKey = 'auto';
+
+            const theme = providerThemes[themeKey] || providerThemes.openai;
+            return { meta, theme };
+        }
 
         function applySelectedModel(modelKey, syncBackend = false) {
             const btn = document.querySelector(`.model-option[data-model="${modelKey}"]`) || document.querySelector('.model-option[data-model="auto"]');
@@ -1269,8 +1374,17 @@
             }
         });
 
-        // File Attachment Upload Pipeline
+        // File Attachment & Camera Upload Pipeline
         attachBtn.addEventListener('click', () => fileInput.click());
+        cameraBtn?.addEventListener('click', () => cameraInput.click());
+
+        cameraInput?.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                await uploadSingleFile(file);
+            }
+            cameraInput.value = '';
+        });
 
         fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
@@ -1596,36 +1710,101 @@
         }
 
         // Create Assistant Bubble
-        function createAssistantBubble() {
+        function createAssistantBubble(initialModelKey) {
+            const isAuto = (currentModel === 'auto');
+            const { meta, theme } = getModelDisplayMeta(initialModelKey || (isAuto ? 'auto' : currentModel));
+            const mName = isAuto ? 'Nexus Auto-Pilot' : meta.name;
+            const mBadge = isAuto ? 'Smart Engine' : (meta.badge || meta.provider);
+
             const wrap = document.createElement('div');
             wrap.className = 'message-wrapper flex gap-3 sm:gap-4 justify-start';
             wrap.innerHTML = `
-                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20 ring-2 ring-blue-500/15 mt-0.5">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <div class="model-avatar h-8 w-8 rounded-full bg-gradient-to-tr ${theme.avatarBg} text-white flex items-center justify-center shrink-0 shadow-md ring-2 ring-white/10 mt-0.5">
+                    <span class="avatar-icon-slot">${theme.iconHtml}</span>
                 </div>
                 <div class="max-w-[88%] sm:max-w-[80%] space-y-2">
+                    <div class="assistant-model-header flex items-center gap-2 mb-1 flex-wrap">
+                        <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-100">
+                            <span class="model-header-icon">${theme.iconHtml}</span>
+                            <span class="model-header-name">${mName}</span>
+                        </span>
+                        <span class="model-header-badge ${theme.badgeClass}">
+                            ${mBadge}
+                        </span>
+                        <span class="model-header-auto ${isAuto ? 'flex' : 'hidden'} text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 items-center gap-1 shadow-xs">
+                            <i data-lucide="sparkles" class="w-2.5 h-2.5 text-purple-500"></i>
+                            <span class="auto-route-label">Routing optimal AI...</span>
+                        </span>
+                    </div>
                     <div class="assistant-content bg-transparent text-slate-800 dark:text-slate-200 prose-chat text-[14.5px]">
                         <span class="cursor-blink"></span>
                     </div>
-                    <div class="assistant-actions hidden items-center gap-3 px-1 pt-1 text-xs text-slate-400">
-                        <button type="button" class="copy-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
-                        </button>
-                        <button type="button" class="listen-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
-                        </button>
+                    <div class="assistant-actions hidden items-center justify-between gap-3 px-1 pt-1 text-xs text-slate-400">
+                        <div class="flex items-center gap-3">
+                            <button type="button" class="copy-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
+                            </button>
+                            <button type="button" class="listen-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
+                            </button>
+                        </div>
+                        <span class="assistant-answered-by text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                            Answered by <strong class="answered-model-name text-slate-600 dark:text-slate-300 font-semibold">${mName}</strong>
+                            <span class="answered-auto-tag ${isAuto ? 'inline' : 'hidden'} text-purple-600 dark:text-purple-400 font-medium">(Auto Engine)</span>
+                        </span>
                     </div>
                 </div>
             `;
             messagesList.appendChild(wrap);
             lucide.createIcons();
             scrollToBottom();
+
+            const headerName = wrap.querySelector('.model-header-name');
+            const headerIcon = wrap.querySelector('.model-header-icon');
+            const headerBadge = wrap.querySelector('.model-header-badge');
+            const headerAuto = wrap.querySelector('.model-header-auto');
+            const autoRouteLabel = wrap.querySelector('.auto-route-label');
+            const avatarSlot = wrap.querySelector('.avatar-icon-slot');
+            const avatarBox = wrap.querySelector('.model-avatar');
+            const answeredModelName = wrap.querySelector('.answered-model-name');
+            const answeredAutoTag = wrap.querySelector('.answered-auto-tag');
+
             return {
                 wrap,
                 content: wrap.querySelector('.assistant-content'),
                 actions: wrap.querySelector('.assistant-actions'),
                 copyBtn: wrap.querySelector('.copy-msg-btn'),
                 listenBtn: wrap.querySelector('.listen-msg-btn'),
+                updateModelInfo: (modelKey, autoRouted, routedReason, routedProvider, routedBadge) => {
+                    const info = getModelDisplayMeta(modelKey);
+                    const displayName = routedBadge || info.meta.name;
+                    headerName.textContent = displayName;
+                    answeredModelName.textContent = displayName;
+                    headerIcon.innerHTML = info.theme.iconHtml;
+                    avatarSlot.innerHTML = info.theme.iconHtml;
+                    avatarBox.className = `model-avatar h-8 w-8 rounded-full bg-gradient-to-tr ${info.theme.avatarBg} text-white flex items-center justify-center shrink-0 shadow-md ring-2 ring-white/10 mt-0.5`;
+                    headerBadge.textContent = routedProvider || info.meta.badge || info.meta.provider;
+                    headerBadge.className = `model-header-badge ${info.theme.badgeClass}`;
+
+                    const isNowAuto = autoRouted || currentModel === 'auto';
+                    if (isNowAuto) {
+                        headerAuto.classList.remove('hidden');
+                        headerAuto.classList.add('flex');
+                        answeredAutoTag.classList.remove('hidden');
+                        answeredAutoTag.classList.add('inline');
+                        if (routedReason) {
+                            autoRouteLabel.textContent = `Auto-Selected: ${routedReason}`;
+                        } else {
+                            autoRouteLabel.textContent = 'Auto-Selected (Smart Engine)';
+                        }
+                    } else {
+                        headerAuto.classList.add('hidden');
+                        headerAuto.classList.remove('flex');
+                        answeredAutoTag.classList.add('hidden');
+                        answeredAutoTag.classList.remove('inline');
+                    }
+                    lucide.createIcons();
+                }
             };
         }
 
@@ -1699,6 +1878,10 @@
                                 currentConversationId = parsed.conversation_id;
                                 updateSidebarConversations(parsed.conversation_id, parsed.title);
                                 history.pushState({}, '', `/chat/c/${parsed.conversation_id}`);
+                            }
+
+                            if (parsed.model) {
+                                bubble.updateModelInfo(parsed.model, parsed.auto_routed, parsed.routed_reason, parsed.routed_provider, parsed.routed_badge);
                             }
 
                             if (parsed.text) {
@@ -1792,21 +1975,44 @@
                         wrap.className = 'message-wrapper flex gap-3 sm:gap-4 ' + (isUser ? 'justify-end' : 'justify-start');
 
                         if (!isUser) {
+                            const pTheme = getModelDisplayMeta(msg.model);
+                            const isAuto = data.conversation.model === 'auto' || msg.model === 'auto' || !msg.model;
                             wrap.innerHTML = `
-                                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20 ring-2 ring-blue-500/15 mt-0.5">
-                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <div class="h-8 w-8 rounded-full bg-gradient-to-tr ${pTheme.theme.avatarBg} text-white flex items-center justify-center shrink-0 shadow-md ring-2 ring-white/10 mt-0.5">
+                                    ${pTheme.theme.iconHtml}
                                 </div>
                                 <div class="max-w-[88%] sm:max-w-[80%] space-y-2">
+                                    <div class="assistant-model-header flex items-center gap-2 mb-1 flex-wrap">
+                                        <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-100">
+                                            ${pTheme.theme.iconHtml}
+                                            <span>${pTheme.meta.name}</span>
+                                        </span>
+                                        <span class="${pTheme.theme.badgeClass}">
+                                            ${pTheme.meta.badge || pTheme.meta.provider}
+                                        </span>
+                                        ${isAuto ? `
+                                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 flex items-center gap-1 shadow-xs">
+                                                <i data-lucide="sparkles" class="w-2.5 h-2.5 text-purple-500"></i>
+                                                <span>Auto-Selected (Smart Engine)</span>
+                                            </span>
+                                        ` : ''}
+                                    </div>
                                     <div class="assistant-content bg-transparent text-slate-800 dark:text-slate-200 prose-chat text-[14.5px]">
                                         ${DOMPurify.sanitize(marked.parse(msg.content))}
                                     </div>
-                                    <div class="assistant-actions flex items-center gap-3 px-1 pt-1 text-xs text-slate-400">
-                                        <button type="button" class="copy-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
-                                        </button>
-                                        <button type="button" class="listen-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
-                                            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
-                                        </button>
+                                    <div class="assistant-actions flex items-center justify-between gap-3 px-1 pt-1 text-xs text-slate-400">
+                                        <div class="flex items-center gap-3">
+                                            <button type="button" class="copy-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span>Copy</span>
+                                            </button>
+                                            <button type="button" class="listen-msg-btn flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                                                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> <span>Listen</span>
+                                            </button>
+                                        </div>
+                                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                                            Answered by <strong class="text-slate-600 dark:text-slate-300 font-semibold">${pTheme.meta.name}</strong>
+                                            ${isAuto ? '<span class="text-purple-600 dark:text-purple-400 font-medium">(Auto Engine)</span>' : ''}
+                                        </span>
                                     </div>
                                 </div>
                             `;
